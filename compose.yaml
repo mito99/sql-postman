@@ -1,0 +1,27 @@
+services:
+  oracle-xe:
+    image: container-registry.oracle.com/database/express:21.3.0-xe
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      - ORACLE_PWD=mito
+      - ORACLE_CHARACTERSET=AL32UTF8
+    volumes:
+      - ./oracle-data:/opt/oracle/oradata
+    shm_size: 2g
+    user: "54321:54321"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
