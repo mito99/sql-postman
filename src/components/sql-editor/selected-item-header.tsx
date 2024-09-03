@@ -89,7 +89,7 @@ export function SelectedItemHeader({
           <ChevronRight className="h-4 w-4" />
           {editingItem ? (
             <Input
-              value={editedItem.directory}
+              value={editedItem.name}
               onChange={handleItemChange}
               onBlur={handleItemBlur}
               className="w-64"

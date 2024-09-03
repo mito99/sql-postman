@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChevronDown,
   Send,
@@ -62,7 +62,17 @@ import { ResponseArea } from "./response-area";
 import { SelectedItemHeader } from "./selected-item-header";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
-import { EditedItem, MenuItem, MenuItems, ResponseData, SelectedItem, SelectedSqls, SqlHistory, SqlParamter } from "./types";
+import {
+  EditedItem,
+  MenuItem,
+  MenuItems,
+  Query,
+  ResponseData,
+  SelectedItem,
+  SelectedSqls,
+  SqlHistory,
+  SqlParamter,
+} from "./types";
 
 export function SqlExecutor() {
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
@@ -79,7 +89,43 @@ export function SqlExecutor() {
   const [sqlHistory, setSqlHistory] = useState<SqlHistory[]>([]);
   const [selectedSqls, setSelectedSqls] = useState<SelectedSqls>([null, null]);
   const [showDiff, setShowDiff] = useState(false);
+  const [queries, setQueries] = useState<Query[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItems[]>([]);
+  useEffect(() => {
+    fetchQueries();
+  }, []);
 
+  useEffect(() => {
+    const groupedQueries = queries.reduce((acc, query) => {
+      const group = query.group;
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(query);
+      return acc;
+    }, {} as { [key: string]: Query[] });
+
+    const newMenuItems = Object.entries(groupedQueries).map(
+      ([group, queries]) => ({
+        id: group,
+        name: group,
+        items: queries.map((query) => ({
+          id: query._id,
+          name: query.name,
+          method: query.parameters.length > 0 ? "POST" : "GET",
+          sql: query.sqlQuery,
+        })),
+      })
+    ) as MenuItems[];
+
+    setMenuItems(newMenuItems);
+  }, [queries]);
+
+  const fetchQueries = async () => {
+    const response = await fetch("/api/query");
+    const data = (await response.json()) as Query[];
+    setQueries(data);
+  };
 
   const handleItemClick = (section: MenuItems, item: MenuItem) => {
     setSelectedItem({ section, item });
@@ -141,8 +187,7 @@ export function SqlExecutor() {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      console.log(data);
+      await fetchQueries(); // 保存後にクエリリストを更新
     }
   };
 
@@ -165,7 +210,7 @@ export function SqlExecutor() {
 
   return (
     <div className="flex h-screen bg-background text-foreground">
-      <Sidebar handleItemClick={handleItemClick} />
+      <Sidebar menuItems={menuItems} handleItemClick={handleItemClick} />
       <div className="flex-1 flex flex-col">
         <Topbar />
         {selectedItem && (

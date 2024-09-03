@@ -12,47 +12,10 @@ import { MenuItem, MenuItems, Query } from "./types";
 
 interface Props {
   handleItemClick: (section: MenuItems, item: MenuItem) => void;
+  menuItems: MenuItems[];
 }
 
-export function Sidebar({ handleItemClick }: Props) {
-  const [menuItems, setMenuItems] = useState<MenuItems[]>([]);
-  const [queries, setQueries] = useState<Query[]>([]);
-
-  useEffect(() => {
-    const fetchQueries = async () => {
-      const response = await fetch("/api/query");
-      const data = (await response.json()) as Query[];
-      setQueries(data);
-    };
-
-    fetchQueries();
-  }, []);
-
-  useEffect(() => {
-    const groupedQueries = queries.reduce((acc, query) => {
-      const group = query.group;
-      if (!acc[group]) {
-        acc[group] = [];
-      }
-      acc[group].push(query);
-      return acc;
-    }, {} as { [key: string]: Query[] });
-
-    const newMenuItems = Object.entries(groupedQueries).map(
-      ([group, queries]) => ({
-        id: group,
-        name: group,
-        items: queries.map((query) => ({
-          id: query._id,
-          name: query.name,
-          method: query.parameters.length > 0 ? "POST" : "GET",
-          sql: query.sqlQuery,
-        })),
-      })
-    ) as MenuItems[];
-
-    setMenuItems(newMenuItems);
-  }, [queries]);
+export function Sidebar({ handleItemClick, menuItems }: Props) {
 
   return (
     <div className="w-64 border-r bg-gray-100">
