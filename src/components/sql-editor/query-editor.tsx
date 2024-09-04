@@ -196,7 +196,6 @@ export function QueryEditor({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]"></TableHead>
                   <TableHead>キー</TableHead>
                   <TableHead>値</TableHead>
                   <TableHead>説明</TableHead>
@@ -206,18 +205,6 @@ export function QueryEditor({
               <TableBody>
                 {parameters.map((param) => (
                   <TableRow key={param.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={param.enabled}
-                        onCheckedChange={(checked) =>
-                          updateParameter(
-                            param.id,
-                            "enabled",
-                            checked.toString()
-                          )
-                        }
-                      />
-                    </TableCell>
                     <TableCell>
                       <Input
                         value={param.key}

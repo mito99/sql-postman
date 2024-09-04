@@ -9,12 +9,15 @@ import {
   Settings,
 } from "lucide-react";
 
-export function Topbar() {
+interface Props {
+  handleNewQuery: () => void;
+}
+
+export function Topbar({ handleNewQuery }: Props) {
   return (
     <div className="flex items-center justify-between p-4 border-b">
       <div className="flex items-center space-x-4">
-        <Input className="w-64" placeholder="クエリを検索..." />
-        <Button variant="outline">新規クエリ</Button>
+        <Button variant="outline" onClick={handleNewQuery}>新規クエリ</Button>
       </div>
       <div className="flex items-center space-x-2">
         <Button variant="ghost" size="icon">

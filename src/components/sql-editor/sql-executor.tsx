@@ -141,6 +141,16 @@ export function SqlExecutor() {
     setResponse(null);
   };
 
+  const handleNewQuery = () => {
+    setSelectedItem(null);
+    setSqlQuery("");
+    setEditedItem({
+      id: "",
+      directory: "",
+      name: "",
+    });
+  };
+
   const handleExecute = () => {
     const fakeData = Array.from({ length: 20 }, (_, i) => ({
       id: i + 1,
@@ -212,7 +222,7 @@ export function SqlExecutor() {
     <div className="flex h-screen bg-background text-foreground">
       <Sidebar menuItems={menuItems} handleItemClick={handleItemClick} />
       <div className="flex-1 flex flex-col">
-        <Topbar />
+        <Topbar handleNewQuery={handleNewQuery} />
         {selectedItem && (
           <SelectedItemHeader
             selectedItem={selectedItem}
