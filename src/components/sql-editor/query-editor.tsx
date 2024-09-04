@@ -1,34 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
 import {
-  Send,
-  Save,
-  Share2,
-  Settings,
-  Bell,
-  HelpCircle,
-  Plus,
-  Trash2,
-  ChevronRight,
-  Edit2,
-  History,
   DiffIcon,
+  History,
+  Plus,
+  Save,
+  Send,
+  Share2,
+  Trash2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +21,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -48,6 +31,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { SelectedSqls, SqlHistory } from "./types";
 
 interface Props {
@@ -60,13 +62,15 @@ interface Props {
     value: string;
     description: string;
   }[];
-  setParameters: (parameters: {
-    id: number;
-    enabled: boolean;
-    key: string;
-    value: string;
-    description: string;
-  }[]) => void;
+  setParameters: (
+    parameters: {
+      id: number;
+      enabled: boolean;
+      key: string;
+      value: string;
+      description: string;
+    }[]
+  ) => void;
   handleExecute: () => void;
   handleSave: () => void;
   sqlHistory: SqlHistory[];
@@ -113,7 +117,21 @@ export function QueryEditor({
   return (
     <div className="flex-1 p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <Input className="w-64" placeholder="データベース名を入力" />
+        <Select>
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder="接続先を選択" />
+          </SelectTrigger>
+          <SelectContent className="w-64">
+            <SelectItem value="app1">app1</SelectItem>
+            <SelectItem value="app2">app2</SelectItem>
+            <SelectItem value="app3">app3</SelectItem>
+            <SelectItem value="app4">app4</SelectItem>
+            <SelectItem value="app5">app5</SelectItem>
+            <SelectItem value="app6">app6</SelectItem>
+            <SelectItem value="app7">app7</SelectItem>
+            <SelectItem value="app8">app8</SelectItem>
+          </SelectContent>
+        </Select>
         <div className="space-x-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -131,9 +149,7 @@ export function QueryEditor({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSave}>
-                  OK
-                </AlertDialogAction>
+                <AlertDialogAction onClick={handleSave}>OK</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -166,9 +182,7 @@ export function QueryEditor({
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100"
                   >
                     <Checkbox
-                      checked={selectedSqls.some(
-                        (sql) => sql?.id === item.id
-                      )}
+                      checked={selectedSqls.some((sql) => sql?.id === item.id)}
                       onCheckedChange={() => handleSelectSql(item.id)}
                     />
                     <div className="truncate">{item.sql}</div>
@@ -269,4 +283,3 @@ export function QueryEditor({
     </div>
   );
 }
- 
