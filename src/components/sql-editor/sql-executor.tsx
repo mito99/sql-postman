@@ -1,61 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  ChevronDown,
-  Send,
-  Save,
-  Share2,
-  Settings,
-  Bell,
-  HelpCircle,
-  Plus,
-  Trash2,
-  ChevronRight,
-  Edit2,
-  History,
-  DiffIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { DiffModal } from "./diff-modal";
 import { QueryEditor } from "./query-editor";
 import { ResponseArea } from "./response-area";
@@ -151,35 +96,41 @@ export function SqlExecutor() {
     });
   };
 
-  const handleExecute = () => {
-    const fakeData = Array.from({ length: 20 }, (_, i) => ({
-      id: i + 1,
-      name: `Item ${i + 1}`,
-      created_at: new Date().toISOString(),
-      status: ["pending", "completed", "failed"][Math.floor(Math.random() * 3)],
-      description: `Description for item ${i + 1}`,
-      category: ["A", "B", "C"][Math.floor(Math.random() * 3)],
-      price: Math.floor(Math.random() * 10000) / 100,
-      quantity: Math.floor(Math.random() * 100),
-      supplier: `Supplier ${Math.floor(Math.random() * 5) + 1}`,
-      last_updated: new Date().toISOString(),
+  const handleExecute = async () => {
+    // パラメータをAPIに渡すためのフォーマットに変換
+    const apiParameters = parameters.map((param) => ({
+      key: param.key,
+      value: param.value,
     }));
 
-    setResponse({
-      columns: [
-        "id",
-        "name",
-        "created_at",
-        "status",
-        "description",
-        "category",
-        "price",
-        "quantity",
-        "supplier",
-        "last_updated",
-      ],
-      rows: fakeData,
-    });
+    try {
+      const response = await fetch("/api/query/sql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sqlQuery,
+          binds: apiParameters, // パラメータをbindsとして渡す
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setResponse({
+          columns: data.columns,
+          rows: data.data,
+        });
+      } else {
+        // エラー処理
+        console.error("API エラー:", data.message);
+        // エラーメッセージを表示するなど
+      }
+    } catch (error) {
+      console.error("API 呼び出しエラー:", error);
+      // エラー処理
+    }
 
     setSqlHistory([...sqlHistory, { id: Date.now(), sql: sqlQuery }]);
   };
