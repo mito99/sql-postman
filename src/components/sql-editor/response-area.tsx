@@ -22,12 +22,12 @@ interface Props {
 
 export function ResponseArea({ response, className }: Props) {
   return (
-    <div className={cn("p-4 border-t flex flex-col", className)}>
+    <div className={cn("p-4 border-t flex flex-col overflow-auto", className)}>
       <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
-      <div className="flex-1 border rounded-md overflow-hidden">
+      <div className="flex-1 border rounded-md">
         <ScrollArea>
           {response ? (
-            <div className="overflow-auto">
+            <div>
               <Table>
                 <TableHeader>
                   <TableRow>
