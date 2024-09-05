@@ -276,7 +276,13 @@ export function QueryEditor({
         <TabsContent value="sql">
           <Textarea
             className="min-h-[200px]"
-            placeholder="SQLクエリをここに入力してください..."
+            spellCheck={false}
+            placeholder={[
+              "SQLクエリをここに入力してください...",
+              "",
+              "パラメータの埋め込みは、:キー で行えます。",
+              "  例) SELECT * FROM users WHERE id = :id",
+            ].join("\n")}
             value={sqlQuery}
             onChange={(e) => setSqlQuery(e.target.value)}
           />
