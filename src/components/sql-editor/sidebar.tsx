@@ -27,9 +27,9 @@ export function Sidebar({ handleItemClick, menuItems, className }: Props) {
                 {section.name}
               </AccordionTrigger>
               <AccordionContent>
-                {section.items.map((item) => (
+                {section.items.map((item, index) => (
                   <div
-                    key={item.id}
+                    key={`${section.id}-${item.id}-${index}`}
                     className="px-4 py-2 text-sm cursor-pointer hover:bg-gray-200"
                     onClick={() => handleItemClick(section, item)}
                   >
