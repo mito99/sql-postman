@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 interface Props {
   response: {
@@ -59,13 +58,7 @@ export function ResponseArea({ response, className }: Props) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <Image
-                src="/placeholder.svg"
-                alt="レスポンスなし"
-                height={100}
-                width={100}
-                className="mb-4"
-              />
+              <i className="i-lucide-database text-4xl m-5" />
               <p>クエリを実行するとレスポンスがここに表示されます</p>
             </div>
           )}
