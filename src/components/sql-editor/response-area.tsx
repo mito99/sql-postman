@@ -10,6 +10,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { Button } from "../ui/button";
 
 interface Props {
   response: {
@@ -19,10 +31,37 @@ interface Props {
   className?: string;
 }
 
+const ExportDialog = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>ダウンロード</AlertDialogTitle>
+          <AlertDialogDescription>ファイル形式は？</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction onClick={() => {}}>CSV形式</AlertDialogAction>
+          <AlertDialogAction onClick={() => {}}>YAML形式</AlertDialogAction>
+          <AlertDialogAction onClick={() => {}}>JSON形式</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>{" "}
+    </AlertDialog>
+  );
+};
+
 export function ResponseArea({ response, className }: Props) {
   return (
     <div className={cn("p-4 border-t flex flex-col overflow-auto", className)}>
-      <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
+      <div className="flex justify-between">
+        <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
+        <ExportDialog>
+          <Button variant="outline" size="sm">
+            <i className="i-lucide-download text-2xl" />
+          </Button>
+        </ExportDialog>
+      </div>
       <div className="flex-1 border rounded-md">
         <ScrollArea>
           {response ? (
