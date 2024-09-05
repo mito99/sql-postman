@@ -17,8 +17,18 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const db = await connectToDatabase();
-  const collection = db.collection("queries");
-  const queries = (await collection.find({}).toArray()) as Query[];
-  return new Response(JSON.stringify(queries));
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("queries");
+    const queries = (await collection.find({}).toArray()) as Query[];
+    return new Response(JSON.stringify(queries));
+  } catch (error) {
+    console.error("クエリ取得エラー:", error);
+    return new Response(
+      JSON.stringify({ message: "クエリ取得中にエラーが発生しました。" }),
+      {
+        status: 500,
+      }
+    );
+  }
 }

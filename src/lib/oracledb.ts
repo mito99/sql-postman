@@ -1,3 +1,4 @@
+import dbInfo from "@/config/db";
 import oracledb, { Connection, Result } from "oracledb";
 
 interface BindItem {
@@ -5,45 +6,26 @@ interface BindItem {
   value: any;
 }
 
-// 接続設定
-const dbConfig: oracledb.ConnectionAttributes = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  connectString: process.env.DB_CONNECT_STRING,
-};
-
-let pool: oracledb.Pool | null = null;
-
-export async function initialize(): Promise<void> {
-  try {
-    pool = await oracledb.createPool(dbConfig);
-    console.log("Connection pool created");
-  } catch (err) {
-    console.error("Error creating connection pool:", err);
-    throw err;
-  }
-}
-
-export async function closePool(): Promise<void> {
-  if (pool) {
-    try {
-      await pool.close(10);
-      console.log("Pool closed");
-    } catch (err) {
-      console.error("Error closing pool:", err);
-      throw err;
-    }
-  }
+async function getConnection(dbName?: string): Promise<Connection> {
+  const dbConfig: oracledb.ConnectionAttributes = {
+    user: dbInfo[dbName || "app1"].user,
+    password: dbInfo[dbName || "app1"].password,
+    connectString: `${dbInfo[dbName || "app1"].host}:${
+      dbInfo[dbName || "app1"].port
+    }/${dbInfo[dbName || "app1"].serviceName}`,
+  };
+  return await oracledb.getConnection(dbConfig);
 }
 
 export async function execute<T>(
   sql: string,
   binds: any[] = [],
-  opts: oracledb.ExecuteOptions = {}
+  opts: oracledb.ExecuteOptions = {},
+  dbName?: string
 ): Promise<Result<T>> {
   let connection: Connection | undefined;
   try {
-    connection = await pool!.getConnection();
+    connection = await getConnection(dbName);
     const result = await connection.execute<T>(sql, binds, opts);
     return result;
   } catch (err) {
@@ -65,14 +47,15 @@ export interface QueryResult {
   columns: string[];
 }
 
-export async function executeDynamicQuery(
-  sql: string,
-  binds: BindItem[]
-): Promise<QueryResult> {
-  if (!pool) {
-    await initialize();
-  }
-
+export async function executeDynamicQuery({
+  dbName,
+  sql,
+  binds,
+}: {
+  dbName?: string;
+  sql: string;
+  binds: BindItem[];
+}): Promise<QueryResult> {
   const processedBinds = binds
     .filter((item) => item.key)
     .reduce((acc, { key, value }) => {
@@ -82,7 +65,7 @@ export async function executeDynamicQuery(
 
   let connection: Connection | undefined;
   try {
-    connection = await pool!.getConnection();
+    connection = await getConnection(dbName);
     const result = await connection.execute(sql, processedBinds, {
       outFormat: oracledb.OUT_FORMAT_OBJECT,
       resultSet: true,

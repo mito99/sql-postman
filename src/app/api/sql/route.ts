@@ -1,12 +1,15 @@
-import { executeDynamicQuery } from "@/lib/oracledb"; // executeDynamicQuery をインポート
+import { executeDynamicQuery } from "@/lib/oracledb";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { sqlQuery, binds } = await request.json(); // binds パラメータを追加
+    const { dbName, sqlQuery, binds } = await request.json();
 
-    // executeDynamicQuery を使用してクエリを実行
-    const { rows, columns } = await executeDynamicQuery(sqlQuery, binds);
+    const { rows, columns } = await executeDynamicQuery({
+      dbName,
+      sql: sqlQuery,
+      binds,
+    });
 
     return NextResponse.json({
       status: "success",

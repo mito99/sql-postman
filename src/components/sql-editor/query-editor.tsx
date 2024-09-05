@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import dbInfo from "@/config/db";
 import {
   Select,
   SelectContent,
@@ -79,6 +80,8 @@ interface Props {
   setSelectedSqls: (selectedSqls: SelectedSqls) => void;
   handleSelectSql: (id: number) => void;
   handleShowDiff: () => void;
+  dbName: string;
+  setDbName: (dbName: string) => void;
 }
 
 export function QueryEditor({
@@ -94,6 +97,8 @@ export function QueryEditor({
   setSelectedSqls,
   handleSelectSql,
   handleShowDiff,
+  setDbName,
+  dbName,
 }: Props) {
   const addParameter = () => {
     setParameters([
@@ -117,19 +122,16 @@ export function QueryEditor({
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <Select>
+        <Select value={dbName} onValueChange={(value) => setDbName(value)}>
           <SelectTrigger className="w-64">
             <SelectValue placeholder="接続先を選択" />
           </SelectTrigger>
           <SelectContent className="w-64">
-            <SelectItem value="app1">app1</SelectItem>
-            <SelectItem value="app2">app2</SelectItem>
-            <SelectItem value="app3">app3</SelectItem>
-            <SelectItem value="app4">app4</SelectItem>
-            <SelectItem value="app5">app5</SelectItem>
-            <SelectItem value="app6">app6</SelectItem>
-            <SelectItem value="app7">app7</SelectItem>
-            <SelectItem value="app8">app8</SelectItem>
+            {Object.keys(dbInfo).map((key) => (
+              <SelectItem key={key} value={key}>
+                {key}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <div className="space-x-2">

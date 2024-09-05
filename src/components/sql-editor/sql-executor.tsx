@@ -24,6 +24,7 @@ export function SqlExecutor() {
   const { toast } = useToast();
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [sqlQuery, setSqlQuery] = useState("");
+  const [dbName, setDbName] = useState("app1");
   const [response, setResponse] = useState<ResponseData | null>(null);
   const [parameters, setParameters] = useState<SqlParamter[]>([
     { id: 1, enabled: true, key: "", value: "", description: "" },
@@ -69,9 +70,27 @@ export function SqlExecutor() {
   }, [queries]);
 
   const fetchQueries = async () => {
-    const response = await fetch("/api/query");
-    const data = (await response.json()) as Query[];
-    setQueries(data);
+    try {
+      const response = await fetch("/api/query");
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast({
+          title: "クエリ取得エラー",
+          description: errorData.message || "クエリを取得できませんでした。",
+          variant: "destructive",
+        });
+        return;
+      }
+      const data = (await response.json()) as Query[];
+      setQueries(data);
+    } catch (error) {
+      console.error("クエリ取得エラー:", error);
+      toast({
+        title: "クエリ取得エラー",
+        description: "クエリを取得できませんでした。",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleItemClick = (section: MenuItems, item: MenuItem) => {
@@ -106,12 +125,13 @@ export function SqlExecutor() {
     }));
 
     try {
-      const response = await fetch("/api/query/sql", {
+      const response = await fetch("/api/sql", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          dbName,
           sqlQuery,
           binds: apiParameters, // パラメータをbindsとして渡す
         }),
@@ -210,6 +230,8 @@ export function SqlExecutor() {
             setSelectedSqls={setSelectedSqls}
             handleSelectSql={handleSelectSql}
             handleShowDiff={handleShowDiff}
+            dbName={dbName}
+            setDbName={setDbName}
           />
           <ResponseArea response={response} className="flex-1" />
         </div>
