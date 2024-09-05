@@ -1,5 +1,10 @@
 import oracledb, { Connection, Result } from "oracledb";
 
+interface BindItem {
+  key: string;
+  value: any;
+}
+
 // 接続設定
 const dbConfig: oracledb.ConnectionAttributes = {
   user: process.env.DB_USER,
@@ -62,15 +67,15 @@ export interface QueryResult {
 
 export async function executeDynamicQuery(
   sql: string,
-  binds: Record<string, any>
+  binds: BindItem[]
 ): Promise<QueryResult> {
   if (!pool) {
     await initialize();
   }
 
-  const processedBinds = Object.entries(binds)
-    .filter(([key]) => !key)
-    .reduce((acc, [key, value]) => {
+  const processedBinds = binds
+    .filter((item) => item.key)
+    .reduce((acc, { key, value }) => {
       acc[key] = validateAndConvertBindValue(value);
       return acc;
     }, {} as Record<string, oracledb.BindParameter>);

@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -10,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 interface Props {
@@ -17,14 +17,15 @@ interface Props {
     columns: string[];
     rows: { [column: string]: any }[];
   } | null;
+  className?: string;
 }
 
-export function ResponseArea({ response }: Props) {
+export function ResponseArea({ response, className }: Props) {
   return (
-    <div className="flex-1 p-4 border-t">
+    <div className={cn("p-4 border-t flex flex-col", className)}>
       <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
-      <div className="h-[calc(100vh-26rem)] border rounded-md overflow-hidden">
-        <ScrollArea className="h-full">
+      <div className="flex-1 border rounded-md overflow-hidden">
+        <ScrollArea>
           {response ? (
             <div className="overflow-auto">
               <Table>
@@ -68,9 +69,9 @@ export function ResponseArea({ response }: Props) {
               <p>クエリを実行するとレスポンスがここに表示されます</p>
             </div>
           )}
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
     </div>
   );
 }
- 

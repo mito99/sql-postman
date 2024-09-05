@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { DiffModal } from "./diff-modal";
 import { QueryEditor } from "./query-editor";
@@ -20,6 +21,7 @@ import {
 } from "./types";
 
 export function SqlExecutor() {
+  const { toast } = useToast();
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
   const [sqlQuery, setSqlQuery] = useState("");
   const [response, setResponse] = useState<ResponseData | null>(null);
@@ -125,11 +127,19 @@ export function SqlExecutor() {
       } else {
         // エラー処理
         console.error("API エラー:", data.message);
-        // エラーメッセージを表示するなど
+        toast({
+          title: "クエリ実行エラー",
+          description: data.message,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("API 呼び出しエラー:", error);
-      // エラー処理
+      toast({
+        title: "クエリ実行エラー",
+        description: "API 呼び出しに失敗しました。",
+        variant: "destructive",
+      });
     }
 
     setSqlHistory([...sqlHistory, { id: Date.now(), sql: sqlQuery }]);
@@ -170,38 +180,45 @@ export function SqlExecutor() {
   };
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
-      <Sidebar menuItems={menuItems} handleItemClick={handleItemClick} />
-      <div className="flex-1 flex flex-col">
-        <Topbar handleNewQuery={handleNewQuery} />
-        {selectedItem && (
-          <SelectedItemHeader
-            selectedItem={selectedItem}
-            editedItem={editedItem}
-            setEditedItem={setEditedItem}
-          />
-        )}
-        <QueryEditor
-          sqlQuery={sqlQuery}
-          setSqlQuery={setSqlQuery}
-          parameters={parameters}
-          setParameters={setParameters}
-          handleExecute={handleExecute}
-          handleSave={handleSave}
-          sqlHistory={sqlHistory}
-          setSqlHistory={setSqlHistory}
-          selectedSqls={selectedSqls}
-          setSelectedSqls={setSelectedSqls}
-          handleSelectSql={handleSelectSql}
-          handleShowDiff={handleShowDiff}
+    <div className="flex justify-center">
+      <div className="flex h-screen bg-background text-foreground container">
+        <Sidebar
+          menuItems={menuItems}
+          handleItemClick={handleItemClick}
+          className="w-[20%] h-full"
         />
-        <ResponseArea response={response} />
+
+        <div className="flex-1 flex flex-col w-[80%]">
+          <Topbar handleNewQuery={handleNewQuery} />
+          {selectedItem && (
+            <SelectedItemHeader
+              selectedItem={selectedItem}
+              editedItem={editedItem}
+              setEditedItem={setEditedItem}
+            />
+          )}
+          <QueryEditor
+            sqlQuery={sqlQuery}
+            setSqlQuery={setSqlQuery}
+            parameters={parameters}
+            setParameters={setParameters}
+            handleExecute={handleExecute}
+            handleSave={handleSave}
+            sqlHistory={sqlHistory}
+            setSqlHistory={setSqlHistory}
+            selectedSqls={selectedSqls}
+            setSelectedSqls={setSelectedSqls}
+            handleSelectSql={handleSelectSql}
+            handleShowDiff={handleShowDiff}
+          />
+          <ResponseArea response={response} className="flex-1" />
+        </div>
+        <DiffModal
+          open={showDiff}
+          onOpenChange={setShowDiff}
+          selectedSqls={selectedSqls}
+        />
       </div>
-      <DiffModal
-        open={showDiff}
-        onOpenChange={setShowDiff}
-        selectedSqls={selectedSqls}
-      />
     </div>
   );
 }
