@@ -3,11 +3,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install -g pnpm  # pnpm をグローバルにインストール
+RUN pnpm install
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 FROM node:20-alpine AS runtime
 WORKDIR /app
@@ -18,4 +19,4 @@ COPY --from=build /app/public /app/public
 
 EXPOSE 3000
 
-CMD ["node_modules/.bin/next", "start"]
+CMD ["pnpm", "start"]
