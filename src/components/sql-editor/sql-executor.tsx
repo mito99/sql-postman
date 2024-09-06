@@ -258,7 +258,11 @@ export function SqlExecutor() {
             setDbName={setDbName}
             handleDelete={handleDelete}
           />
-          <ResponseArea response={response} className="flex-1" />
+          <ResponseArea
+            response={response}
+            className="flex-1"
+            editedItem={editedItem}
+          />
         </div>
         <DiffModal
           open={showDiff}

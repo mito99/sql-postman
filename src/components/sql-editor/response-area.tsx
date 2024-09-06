@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import YAML from "js-yaml";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
+import { EditedItem } from "./types";
 
 interface Props {
   response: {
@@ -29,9 +31,60 @@ interface Props {
     rows: { [column: string]: any }[];
   } | null;
   className?: string;
+  editedItem: EditedItem;
 }
 
-const ExportDialog = ({ children }: { children: React.ReactNode }) => {
+const ExportDialog = ({
+  children,
+  response,
+  editedItem,
+}: {
+  children: React.ReactNode;
+  response: Props["response"];
+  editedItem: Props["editedItem"];
+}) => {
+  const convertToCSV = (response: Props["response"]) => {
+    if (!response) return "";
+    const header = response.columns.join(",");
+    const rows = response.rows.map((row) => Object.values(row).join(","));
+    return `${header}\n${rows.join("\n")}`;
+  };
+
+  const handleDownload = (format: "csv" | "tsv" | "json" | "yaml") => {
+    const { mimeType, content } = (() => {
+      switch (format) {
+        case "csv":
+          return { mimeType: "text/csv", content: convertToCSV(response) };
+        case "tsv":
+          return {
+            mimeType: "text/tsv",
+            content: convertToCSV(response).replace(/,/g, "\t"),
+          };
+        case "json":
+          return {
+            mimeType: "application/json",
+            content: JSON.stringify(response, null, 2),
+          };
+        case "yaml":
+          return { mimeType: "text/yaml", content: YAML.dump(response) };
+      }
+    })();
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = (() => {
+      const timestamp = new Date().toISOString();
+      const dir = editedItem.directory;
+      const name = editedItem.name;
+      const block = dir && name ? `${dir}_${name}-` : "";
+      return `response-${block}${timestamp}.${format}`;
+    })();
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -42,25 +95,36 @@ const ExportDialog = ({ children }: { children: React.ReactNode }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>キャンセル</AlertDialogCancel>
-          <AlertDialogAction onClick={() => {}}>CSV形式</AlertDialogAction>
-          <AlertDialogAction onClick={() => {}}>YAML形式</AlertDialogAction>
-          <AlertDialogAction onClick={() => {}}>JSON形式</AlertDialogAction>
+          <AlertDialogAction onClick={() => handleDownload("csv")}>
+            CSV
+          </AlertDialogAction>
+          <AlertDialogAction onClick={() => handleDownload("tsv")}>
+            TSV
+          </AlertDialogAction>
+          <AlertDialogAction onClick={() => handleDownload("yaml")}>
+            YAML
+          </AlertDialogAction>
+          <AlertDialogAction onClick={() => handleDownload("json")}>
+            JSON
+          </AlertDialogAction>
         </AlertDialogFooter>
-      </AlertDialogContent>{" "}
+      </AlertDialogContent>
     </AlertDialog>
   );
 };
 
-export function ResponseArea({ response, className }: Props) {
+export function ResponseArea({ response, className, editedItem }: Props) {
   return (
     <div className={cn("p-4 border-t flex flex-col overflow-auto", className)}>
       <div className="flex justify-between">
         <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
-        <ExportDialog>
-          <Button variant="outline" size="sm">
-            <i className="i-lucide-download text-2xl" />
-          </Button>
-        </ExportDialog>
+        {response && (
+          <ExportDialog response={response} editedItem={editedItem}>
+            <Button variant="outline" size="sm">
+              <i className="i-lucide-download text-2xl" />
+            </Button>
+          </ExportDialog>
+        )}
       </div>
       <div className="flex-1 border rounded-md">
         <ScrollArea>
