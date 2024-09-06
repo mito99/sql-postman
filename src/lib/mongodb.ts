@@ -1,5 +1,5 @@
 import { Query } from "@/components/sql-editor";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
 const dbName = process.env.MONGODB_DB || "test";
@@ -35,10 +35,22 @@ export async function getData(collectionName: string, query: any = {}) {
 export async function saveData(collectionName: string, data: Query) {
   const db = await connectToDatabase();
   const collection = db.collection(collectionName);
-  const result = await collection.updateOne(
-    { _id: data._id },
-    { $set: data },
-    { upsert: true }
-  );
-  return result;
+  const { _id, ...dataWithoutId } = data;
+  if (_id) {
+    const result = await collection.updateOne(
+      { _id: new ObjectId(data._id) },
+      { $set: dataWithoutId },
+      { upsert: true }
+    );
+    return {
+      _id: data._id,
+      ...dataWithoutId,
+    };
+  } else {
+    const result = await collection.insertOne(dataWithoutId);
+    return {
+      _id: result.insertedId,
+      ...dataWithoutId,
+    };
+  }
 }

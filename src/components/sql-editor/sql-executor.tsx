@@ -33,6 +33,7 @@ export function SqlExecutor() {
     id: "",
     directory: "",
     name: "",
+    method: "SELECT",
   });
   const [sqlHistory, setSqlHistory] = useState<SqlHistory[]>([]);
   const [selectedSqls, setSelectedSqls] = useState<SelectedSqls>([null, null]);
@@ -60,7 +61,7 @@ export function SqlExecutor() {
         items: queries.map((query) => ({
           id: query._id,
           name: query.name,
-          method: query.parameters.length > 0 ? "POST" : "GET",
+          method: query.method,
           sql: query.sqlQuery,
         })),
       })
@@ -100,6 +101,7 @@ export function SqlExecutor() {
       id: item.id,
       directory: section.name,
       name: item.name,
+      method: item.method,
     });
     setParameters([
       { id: 1, enabled: true, key: "", value: "", description: "" },
@@ -114,6 +116,7 @@ export function SqlExecutor() {
       id: "",
       directory: "",
       name: "",
+      method: "SELECT",
     });
   };
 
@@ -174,11 +177,35 @@ export function SqlExecutor() {
         group: editedItem?.directory,
         name: editedItem?.name,
         _id: editedItem?.id,
+        method: editedItem?.method,
       }),
     });
 
     if (response.ok) {
-      await fetchQueries(); // 保存後にクエリリストを更新
+      await fetchQueries();
+      const data = await response.json();
+      setEditedItem({
+        ...editedItem,
+        id: data._id,
+      });
+      toast({
+        title: data.message,
+        duration: 1000,
+        className: "bg-blue-500 border-blue-500 text-white",
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    const response = await fetch("/api/query", {
+      method: "DELETE",
+      body: JSON.stringify({
+        _id: editedItem?.id,
+      }),
+    });
+
+    if (response.ok) {
+      await fetchQueries();
     }
   };
 
@@ -210,13 +237,10 @@ export function SqlExecutor() {
 
         <div className="flex-1 flex flex-col w-[80%]">
           <Topbar handleNewQuery={handleNewQuery} />
-          {selectedItem && (
-            <SelectedItemHeader
-              selectedItem={selectedItem}
-              editedItem={editedItem}
-              setEditedItem={setEditedItem}
-            />
-          )}
+          <SelectedItemHeader
+            editedItem={editedItem}
+            setEditedItem={setEditedItem}
+          />
           <QueryEditor
             sqlQuery={sqlQuery}
             setSqlQuery={setSqlQuery}
@@ -232,6 +256,7 @@ export function SqlExecutor() {
             handleShowDiff={handleShowDiff}
             dbName={dbName}
             setDbName={setDbName}
+            handleDelete={handleDelete}
           />
           <ResponseArea response={response} className="flex-1" />
         </div>

@@ -82,7 +82,54 @@ interface Props {
   handleShowDiff: () => void;
   dbName: string;
   setDbName: (dbName: string) => void;
+  handleDelete: () => void;
 }
+
+const SaveButton = ({ handleSave }: { handleSave: () => void }) => {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Save className="h-4 w-4 mr-2" />
+          保存
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>保存の確認</AlertDialogTitle>
+          <AlertDialogDescription>保存してよいですか？</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction onClick={handleSave}>OK</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+const DeleteButton = ({ handleDelete }: { handleDelete: () => void }) => {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Trash2 className="h-4 w-4 mr-2" />
+          削除
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>削除の確認</AlertDialogTitle>
+          <AlertDialogDescription>削除してよいですか？</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete}>OK</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
 export function QueryEditor({
   sqlQuery,
@@ -99,6 +146,7 @@ export function QueryEditor({
   handleShowDiff,
   setDbName,
   dbName,
+  handleDelete,
 }: Props) {
   const addParameter = () => {
     setParameters([
@@ -135,26 +183,8 @@ export function QueryEditor({
           </SelectContent>
         </Select>
         <div className="space-x-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                保存
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>保存の確認</AlertDialogTitle>
-                <AlertDialogDescription>
-                  保存してよいですか？
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSave}>OK</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <SaveButton handleSave={handleSave} />
+          <DeleteButton handleDelete={handleDelete} />
           <Button variant="outline" size="sm">
             <Share2 className="h-4 w-4 mr-2" />
             共有

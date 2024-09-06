@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import { MenuItem, MenuItems } from "./types";
 
 interface Props {
@@ -34,13 +35,17 @@ export function Sidebar({ handleItemClick, menuItems, className }: Props) {
                     onClick={() => handleItemClick(section, item)}
                   >
                     <span
-                      className={`mr-2 ${
-                        item.method === "POST"
-                          ? "text-orange-500"
-                          : "text-green-500"
-                      }`}
+                      className={clsx(
+                        "mr-2 text-white text-center rounded-full w-5 inline-block",
+                        {
+                          "bg-select": item.method == "SELECT",
+                          "bg-insert": item.method == "INSERT",
+                          "bg-update": item.method == "UPDATE",
+                          "bg-delete": item.method == "DELETE",
+                        }
+                      )}
                     >
-                      {item.method}
+                      {item.method.charAt(0)}
                     </span>
                     {item.name}
                   </div>

@@ -4,6 +4,41 @@ const {
   getIconCollections,
 } = require("@egoist/tailwindcss-icons");
 
+const customPlugin = function ({
+  addUtilities,
+  theme,
+}: {
+  addUtilities: (utilities: any) => void;
+  theme: (arg0: string) => any;
+}) {
+  addUtilities({
+    ".text-select": {
+      color: theme("colors.blue.500"),
+    },
+    ".text-update": {
+      color: theme("colors.orange.500"),
+    },
+    ".text-delete": {
+      color: theme("colors.red.500"),
+    },
+    ".text-insert": {
+      color: theme("colors.green.500"),
+    },
+    ".bg-select": {
+      backgroundColor: theme("colors.blue.500"),
+    },
+    ".bg-update": {
+      backgroundColor: theme("colors.orange.500"),
+    },
+    ".bg-delete": {
+      backgroundColor: theme("colors.red.500"),
+    },
+    ".bg-insert": {
+      backgroundColor: theme("colors.green.500"),
+    },
+  });
+};
+
 const config: Config = {
   darkMode: ["class"],
   content: [
@@ -96,6 +131,7 @@ const config: Config = {
       // https://icones.js.org/
       collections: getIconCollections(["tabler", "lucide"]),
     }),
+    customPlugin,
   ],
 };
 export default config;

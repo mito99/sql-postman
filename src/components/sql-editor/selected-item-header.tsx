@@ -1,39 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronRight, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import clsx from "clsx";
+import { ChevronRight, Edit2 } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { EditedItem } from "./types";
 
 interface Props {
-  selectedItem: {
-    section: {
-      id: string;
-      name: string;
-      items: {
-        id: string;
-        name: string;
-        method: "POST" | "GET";
-        sql: string;
-      }[];
-    };
-    item: {
-      id: string;
-      name: string;
-      method: "POST" | "GET";
-      sql: string;
-    };
-  };
   editedItem: EditedItem;
   setEditedItem: (editedItem: EditedItem) => void;
 }
 
-export function SelectedItemHeader({
-  selectedItem,
-  editedItem,
-  setEditedItem,
-}: Props) {
+export function SelectedItemHeader({ editedItem, setEditedItem }: Props) {
   const [editingDirectory, setEditingDirectory] = useState(false);
   const [editingItem, setEditingItem] = useState(false);
 
@@ -46,11 +32,11 @@ export function SelectedItemHeader({
   };
 
   const handleDirectoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedItem({...editedItem, directory: e.target.value});
+    setEditedItem({ ...editedItem, directory: e.target.value });
   };
 
   const handleItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedItem({...editedItem, name: e.target.value});
+    setEditedItem({ ...editedItem, name: e.target.value });
   };
 
   const handleDirectoryBlur = () => {
@@ -61,11 +47,35 @@ export function SelectedItemHeader({
     setEditingItem(false);
   };
 
+  const handleMethodChange = (value: string) => {
+    setEditedItem({ ...editedItem, method: value as EditedItem["method"] });
+  };
+
   return (
     <div className="p-4 border-b bg-white">
       <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center text-white font-bold">
-          {selectedItem.item.method === "POST" ? "P" : "G"}
+        <div
+          className={clsx(
+            "w-24 h-8 rounded-md flex items-center justify-center font-bold",
+            {
+              "bg-select text-white": editedItem.method === "SELECT",
+              "bg-insert text-white": editedItem.method === "INSERT",
+              "bg-update text-white": editedItem.method === "UPDATE",
+              "bg-delete text-white": editedItem.method === "DELETE",
+            }
+          )}
+        >
+          <Select value={editedItem.method} onValueChange={handleMethodChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="SELECT">SELECT</SelectItem>
+              <SelectItem value="UPDATE">UPDATE</SelectItem>
+              <SelectItem value="INSERT">INSERT</SelectItem>
+              <SelectItem value="DELETE">DELETE</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-center space-x-2">
           {editingDirectory ? (
@@ -82,7 +92,13 @@ export function SelectedItemHeader({
               onClick={handleDirectoryEdit}
               className="p-1"
             >
-              <span className="font-semibold">{editedItem.directory}</span>
+              {editedItem.directory ? (
+                <span className="font-semibold">{editedItem.directory}</span>
+              ) : (
+                <span className="text-gray-500">
+                  ディレクトリ名を入力してください
+                </span>
+              )}
               <Edit2 className="h-4 w-4 ml-2" />
             </Button>
           )}
@@ -96,12 +112,14 @@ export function SelectedItemHeader({
               autoFocus
             />
           ) : (
-            <Button
-              variant="ghost"
-              onClick={handleItemEdit}
-              className="p-1"
-            >
-              <span className="font-semibold">{editedItem.name}</span>
+            <Button variant="ghost" onClick={handleItemEdit} className="p-1">
+              {editedItem.name ? (
+                <span className="font-semibold">{editedItem.name}</span>
+              ) : (
+                <span className="text-gray-500">
+                  クエリ名を入力してください
+                </span>
+              )}
               <Edit2 className="h-4 w-4 ml-2" />
             </Button>
           )}

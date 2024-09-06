@@ -7,7 +7,13 @@ interface SqlHistory {
 
 interface SelectedSqls {
   [index: number]: SqlHistory | null;
-  some(callbackfn: (value: SqlHistory | null, index: number, array: (SqlHistory | null)[]) => boolean): boolean;
+  some(
+    callbackfn: (
+      value: SqlHistory | null,
+      index: number,
+      array: (SqlHistory | null)[]
+    ) => boolean
+  ): boolean;
 }
 
 interface SqlParamter {
@@ -21,7 +27,7 @@ interface SqlParamter {
 interface MenuItem {
   id: string;
   name: string;
-  method: "POST" | "GET"; 
+  method: EditedItem["method"];
   sql: string;
 }
 
@@ -51,22 +57,24 @@ interface Query {
   sqlQuery: string;
   group: string;
   name: string;
+  method: EditedItem["method"];
 }
 
-  interface EditedItem {
-    id: string;
-    directory: string;
-    name: string;
-  }
+interface EditedItem {
+  id: string;
+  directory: string;
+  name: string;
+  method: "" | "SELECT" | "UPDATE" | "INSERT" | "DELETE";
+}
 
 export type {
-  SqlHistory,
-  SelectedSqls,
+  EditedItem,
   MenuItem,
   MenuItems,
-  SelectedItem,
-  ResponseData,
   Query,
+  ResponseData,
+  SelectedItem,
+  SelectedSqls,
+  SqlHistory,
   SqlParamter,
-  EditedItem
 };
