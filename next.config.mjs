@@ -19,7 +19,7 @@ const nextConfig = {
         "oci-secrets",
       ],
     )
-
+    config.resolve.modules.push('./src')
     return config
   },
 }

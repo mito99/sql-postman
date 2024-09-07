@@ -1,18 +1,18 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm install -g pnpm  # pnpm をグローバルにインストール
+COPY . .
+RUN npm install -g pnpm
 RUN pnpm install
 
-COPY . .
-
-RUN pnpm run build
+RUN pnpm build
 
 FROM node:20-alpine AS runtime
 WORKDIR /app
 
+RUN npm install -g pnpm
+
+COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public /app/public
