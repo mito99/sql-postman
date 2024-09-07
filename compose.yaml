@@ -22,6 +22,18 @@ services:
       - mongodb
     environment:
       NODE_ENV: production
+      AUTH_URL: http://localhost:3000/api/auth
+      AUTH_SECRET: jNKnt9ii69HcUi1k4WX00KoWNAMBKeDxFrtP8Jw4A7M=
+      LDAP_URI: ldap://localhost:389
+      LDAP_BASE_DN: ou=users,dc=localhost
+      LDAP_BIND_DN: cn=admin,dc=localhost
+      LDAP_BIND_PASSWORD: admin
+      DB_PORT: 1521
+      DB_SERVICE_NAME: XEPDB1
+      DB_USER: mineo
+      DB_PASSWORD: mineo
+      MONGODB_URI: mongodb://root:example@mongodb:27017
+      MONGODB_DB: sql-postman
 
 volumes:
   mongodb_data:
