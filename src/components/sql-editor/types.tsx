@@ -59,6 +59,7 @@ interface Query {
   group: string;
   name: string;
   method: EditedItem["method"];
+  description: string;
 }
 
 interface EditedItem {

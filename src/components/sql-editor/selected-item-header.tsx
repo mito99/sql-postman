@@ -23,7 +23,6 @@ interface Props {
 export function SelectedItemHeader({ editedItem, setEditedItem }: Props) {
   const [editingDirectory, setEditingDirectory] = useState(false);
   const [editingItem, setEditingItem] = useState(false);
-  const [description, setDescription] = useState("");
 
   const handleDirectoryEdit = () => {
     setEditingDirectory(true);
@@ -56,7 +55,7 @@ export function SelectedItemHeader({ editedItem, setEditedItem }: Props) {
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setDescription(e.target.value);
+    setEditedItem({ ...editedItem, description: e.target.value });
   };
 
   return (
@@ -138,7 +137,7 @@ export function SelectedItemHeader({ editedItem, setEditedItem }: Props) {
           placeholder="概要を入力してください"
           rows={1}
           className="min-h-[1.1rem]"
-          value={description}
+          value={editedItem.description}
           onChange={handleDescriptionChange}
         />
       </div>

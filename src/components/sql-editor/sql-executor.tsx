@@ -91,6 +91,7 @@ export function SqlExecutor() {
           name: query.name,
           method: query.method,
           sql: query.sqlQuery,
+          description: query.description,
         })),
       })
     ) as MenuItems[];

@@ -2,17 +2,11 @@ import { Query } from "@/components/sql-editor";
 import { connectToDatabase, saveData } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
-  const { parameters, sqlQuery, group, name, _id, method } =
-    (await req.json()) as Query;
+  const query = (await req.json()) as Query;
   const db = await connectToDatabase();
   const collection = db.collection("queries");
   const result = await saveData("queries", {
-    parameters,
-    sqlQuery,
-    group,
-    name,
-    _id,
-    method,
+    ...query,
   }); // データを保存
   return new Response(
     JSON.stringify({ message: "保存しました", _id: result._id })
