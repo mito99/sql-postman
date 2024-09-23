@@ -51,7 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { SelectedSqls, SqlHistory } from "./types";
+import { SelectedSqlList, SqlHistory } from "./types";
 
 interface Props {
   sqlQuery: string;
@@ -76,8 +76,8 @@ interface Props {
   handleSave: () => void;
   sqlHistory: SqlHistory[];
   setSqlHistory: (sqlHistory: SqlHistory[]) => void;
-  selectedSqls: SelectedSqls;
-  setSelectedSqls: (selectedSqls: SelectedSqls) => void;
+  selectedSqlList: SelectedSqlList;
+  setSelectedSqlList: (selectedSqlList: SelectedSqlList) => void;
   handleSelectSql: (id: number) => void;
   handleShowDiff: () => void;
   dbName: string;
@@ -140,8 +140,8 @@ export function QueryEditor({
   handleSave,
   sqlHistory,
   setSqlHistory,
-  selectedSqls,
-  setSelectedSqls,
+  selectedSqlList,
+  setSelectedSqlList,
   handleSelectSql,
   handleShowDiff,
   setDbName,
@@ -214,7 +214,9 @@ export function QueryEditor({
                     className="flex items-center space-x-2 p-2 hover:bg-gray-100"
                   >
                     <Checkbox
-                      checked={selectedSqls.some((sql) => sql?.id === item.id)}
+                      checked={selectedSqlList.some(
+                        (sql) => sql?.id === item.id
+                      )}
                       onCheckedChange={() => handleSelectSql(item.id)}
                     />
                     <div className="truncate">{item.sql}</div>
@@ -223,7 +225,7 @@ export function QueryEditor({
               </ScrollArea>
               <Button
                 onClick={handleShowDiff}
-                disabled={!selectedSqls[0] || !selectedSqls[1]}
+                disabled={!selectedSqlList[0] || !selectedSqlList[1]}
               >
                 <DiffIcon className="h-4 w-4 mr-2" />
                 差分を表示

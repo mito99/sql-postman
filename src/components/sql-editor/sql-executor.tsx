@@ -15,9 +15,9 @@ import {
   Query,
   ResponseData,
   SelectedItem,
-  SelectedSqls,
+  SelectedSqlList,
   SqlHistory,
-  SqlParamter,
+  SqlParameter,
 } from "./types";
 
 export function SqlExecutor() {
@@ -26,17 +26,21 @@ export function SqlExecutor() {
   const [sqlQuery, setSqlQuery] = useState("");
   const [dbName, setDbName] = useState("app1");
   const [response, setResponse] = useState<ResponseData | null>(null);
-  const [parameters, setParameters] = useState<SqlParamter[]>([
+  const [parameters, setParameters] = useState<SqlParameter[]>([
     { id: 1, enabled: true, key: "", value: "", description: "" },
   ]);
   const [editedItem, setEditedItem] = useState<EditedItem>({
     id: "",
     directory: "",
     name: "",
+    description: "",
     method: "SELECT",
   });
   const [sqlHistory, setSqlHistory] = useState<SqlHistory[]>([]);
-  const [selectedSqls, setSelectedSqls] = useState<SelectedSqls>([null, null]);
+  const [selectedSqlList, setSelectedSqlList] = useState<SelectedSqlList>([
+    null,
+    null,
+  ]);
   const [showDiff, setShowDiff] = useState(false);
   const [queries, setQueries] = useState<Query[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItems[]>([]);
@@ -102,6 +106,7 @@ export function SqlExecutor() {
       directory: section.name,
       name: item.name,
       method: item.method,
+      description: item.description,
     });
     setParameters([
       { id: 1, enabled: true, key: "", value: "", description: "" },
@@ -117,6 +122,7 @@ export function SqlExecutor() {
       directory: "",
       name: "",
       method: "SELECT",
+      description: "",
     });
   };
 
@@ -211,17 +217,17 @@ export function SqlExecutor() {
 
   const handleSelectSql = (id: number) => {
     const sql = sqlHistory.find((item) => item.id === id)!;
-    if (selectedSqls[0] === null) {
-      setSelectedSqls([sql, selectedSqls[1]]);
-    } else if (selectedSqls[1] === null) {
-      setSelectedSqls([selectedSqls[0], sql]);
+    if (selectedSqlList[0] === null) {
+      setSelectedSqlList([sql, selectedSqlList[1]]);
+    } else if (selectedSqlList[1] === null) {
+      setSelectedSqlList([selectedSqlList[0], sql]);
     } else {
-      setSelectedSqls([selectedSqls[1], sql]);
+      setSelectedSqlList([selectedSqlList[1], sql]);
     }
   };
 
   const handleShowDiff = () => {
-    if (selectedSqls[0] && selectedSqls[1]) {
+    if (selectedSqlList[0] && selectedSqlList[1]) {
       setShowDiff(true);
     }
   };
@@ -250,8 +256,8 @@ export function SqlExecutor() {
             handleSave={handleSave}
             sqlHistory={sqlHistory}
             setSqlHistory={setSqlHistory}
-            selectedSqls={selectedSqls}
-            setSelectedSqls={setSelectedSqls}
+            selectedSqlList={selectedSqlList}
+            setSelectedSqlList={setSelectedSqlList}
             handleSelectSql={handleSelectSql}
             handleShowDiff={handleShowDiff}
             dbName={dbName}
@@ -267,7 +273,7 @@ export function SqlExecutor() {
         <DiffModal
           open={showDiff}
           onOpenChange={setShowDiff}
-          selectedSqls={selectedSqls}
+          selectedSqlList={selectedSqlList}
         />
       </div>
     </div>

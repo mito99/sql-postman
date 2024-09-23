@@ -5,7 +5,7 @@ interface SqlHistory {
   sql: string;
 }
 
-interface SelectedSqls {
+interface SelectedSqlList {
   [index: number]: SqlHistory | null;
   some(
     callbackfn: (
@@ -16,7 +16,7 @@ interface SelectedSqls {
   ): boolean;
 }
 
-interface SqlParamter {
+interface SqlParameter {
   id: number;
   enabled: boolean;
   key: string;
@@ -29,6 +29,7 @@ interface MenuItem {
   name: string;
   method: EditedItem["method"];
   sql: string;
+  description: string;
 }
 
 interface MenuItems {
@@ -53,7 +54,7 @@ interface ResponseData {
 
 interface Query {
   _id: string;
-  parameters: SqlParamter[];
+  parameters: SqlParameter[];
   sqlQuery: string;
   group: string;
   name: string;
@@ -65,6 +66,7 @@ interface EditedItem {
   directory: string;
   name: string;
   method: "" | "SELECT" | "UPDATE" | "INSERT" | "DELETE";
+  description: string; // 概要を追加
 }
 
 export type {
@@ -74,7 +76,7 @@ export type {
   Query,
   ResponseData,
   SelectedItem,
-  SelectedSqls,
+  SelectedSqlList,
   SqlHistory,
-  SqlParamter,
+  SqlParameter,
 };
