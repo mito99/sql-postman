@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { EditedItem } from "./types";
+import { Textarea } from "../ui/textarea";
 
 interface Props {
   editedItem: EditedItem;
@@ -124,6 +125,13 @@ export function SelectedItemHeader({ editedItem, setEditedItem }: Props) {
             </Button>
           )}
         </div>
+      </div>
+      <div className="mt-4">
+        <Textarea
+          placeholder="概要を入力してください"
+          rows={1}
+          className="min-h-[1.1rem]"
+        />
       </div>
     </div>
   );

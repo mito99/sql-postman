@@ -305,7 +305,7 @@ export function QueryEditor({
         </TabsContent>
         <TabsContent value="sql">
           <Textarea
-            className="min-h-[200px]"
+            className="min-h-[130px]"
             spellCheck={false}
             placeholder={[
               "SQLクエリをここに入力してください...",
