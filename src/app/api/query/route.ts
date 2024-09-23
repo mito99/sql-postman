@@ -1,5 +1,6 @@
 import { Query } from "@/components/sql-editor";
 import { connectToDatabase, saveData } from "@/lib/mongodb";
+import { ObjectId } from "mongodb"; // ObjectId をインポート
 
 export async function POST(req: Request) {
   const query = (await req.json()) as Query;
@@ -35,7 +36,7 @@ export async function DELETE(req: Request) {
     const { _id } = (await req.json()) as Query;
     const db = await connectToDatabase();
     const collection = db.collection("queries");
-    await collection.deleteOne({ _id });
+    const result = await collection.deleteOne({ _id: new ObjectId(_id) });
     return new Response(JSON.stringify({ message: "削除しました" }));
   } catch (error) {
     console.error("クエリ削除エラー:", error);

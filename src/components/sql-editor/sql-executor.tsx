@@ -213,6 +213,11 @@ export function SqlExecutor() {
 
     if (response.ok) {
       await fetchQueries();
+      toast({
+        title: "削除しました",
+        duration: 1000,
+        className: "bg-blue-500 border-blue-500 text-white",
+      });
     }
   };
 
