@@ -1,7 +1,7 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DiffModal } from "./diff-modal";
 import { QueryEditor } from "./query-editor";
 import { ResponseArea } from "./response-area";
@@ -40,9 +40,33 @@ export function SqlExecutor() {
   const [showDiff, setShowDiff] = useState(false);
   const [queries, setQueries] = useState<Query[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItems[]>([]);
+  const fetchQueries = useCallback(async () => {
+    try {
+      const response = await fetch("/api/query");
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast({
+          title: "クエリ取得エラー",
+          description: errorData.message || "クエリを取得できませんでした。",
+          variant: "destructive",
+        });
+        return;
+      }
+      const data = (await response.json()) as Query[];
+      setQueries(data);
+    } catch (error) {
+      console.error("クエリ取得エラー:", error);
+      toast({
+        title: "クエリ取得エラー",
+        description: "クエリを取得できませんでした。",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
   useEffect(() => {
     fetchQueries();
-  }, []);
+  }, [fetchQueries]);
 
   useEffect(() => {
     const groupedQueries = queries.reduce((acc, query) => {
@@ -69,30 +93,6 @@ export function SqlExecutor() {
 
     setMenuItems(newMenuItems);
   }, [queries]);
-
-  const fetchQueries = async () => {
-    try {
-      const response = await fetch("/api/query");
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast({
-          title: "クエリ取得エラー",
-          description: errorData.message || "クエリを取得できませんでした。",
-          variant: "destructive",
-        });
-        return;
-      }
-      const data = (await response.json()) as Query[];
-      setQueries(data);
-    } catch (error) {
-      console.error("クエリ取得エラー:", error);
-      toast({
-        title: "クエリ取得エラー",
-        description: "クエリを取得できませんでした。",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleItemClick = (section: MenuItems, item: MenuItem) => {
     setSelectedItem({ section, item });
