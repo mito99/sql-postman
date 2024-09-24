@@ -54,14 +54,14 @@ export function Sidebar({ handleItemClick, menuItems, className }: Props) {
         <Accordion type="multiple" className="w-full">
           {filterMenuItems.map((section) => (
             <AccordionItem value={section.id} key={section.id}>
-              <AccordionTrigger className="px-4 py-2 text-sm font-medium">
+              <AccordionTrigger className="px-4 py-2 text-xs font-medium">
                 {section.name}
               </AccordionTrigger>
               <AccordionContent>
                 {section.items.map((item, index) => (
                   <div
                     key={`${section.id}-${item.id}-${index}`}
-                    className="px-4 py-2 text-sm cursor-pointer hover:bg-gray-200"
+                    className="px-4 py-2 text-xs cursor-pointer hover:bg-gray-200 truncate"
                     onClick={() => handleItemClick(section, item)}
                   >
                     <span
