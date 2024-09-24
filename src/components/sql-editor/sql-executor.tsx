@@ -49,6 +49,8 @@ export function SqlExecutor() {
   const [showDiff, setShowDiff] = useState(false);
   const [queries, setQueries] = useState<Query[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItems[]>([]);
+  const [dbLabelList, setDbLabelList] = useState<string[]>([]);
+
   const fetchQueries = useCallback(async () => {
     try {
       const response = await fetch("/api/query");
@@ -243,6 +245,20 @@ export function SqlExecutor() {
     }
   };
 
+  useEffect(() => {
+    const fetchDbLabel = async () => {
+      try {
+        const response = await fetch("/api/dbLabel");
+        const data = await response.json();
+        setDbLabelList(data.labels);
+      } catch (error) {
+        console.error("データベースラベルの取得に失敗しました:", error);
+      }
+    };
+
+    fetchDbLabel();
+  }, []);
+
   return (
     <div className="flex justify-center">
       <div className="flex h-screen bg-background text-foreground container">
@@ -277,6 +293,7 @@ export function SqlExecutor() {
                 handleShowDiff={handleShowDiff}
                 dbName={dbName}
                 setDbName={setDbName}
+                dbLabelList={dbLabelList}
                 handleDelete={handleDelete}
               />
               <ResponseArea

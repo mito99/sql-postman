@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import dbInfo from "@/config/db";
 import {
   Select,
   SelectContent,
@@ -52,6 +51,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { SelectedSqlList, SqlHistory } from "./types";
+import { useState, useEffect } from "react";
 
 interface Props {
   sqlQuery: string;
@@ -83,6 +83,7 @@ interface Props {
   dbName: string;
   setDbName: (dbName: string) => void;
   handleDelete: () => void;
+  dbLabelList: string[];
 }
 
 const SaveButton = ({ handleSave }: { handleSave: () => void }) => {
@@ -139,13 +140,12 @@ export function QueryEditor({
   handleExecute,
   handleSave,
   sqlHistory,
-  setSqlHistory,
   selectedSqlList,
-  setSelectedSqlList,
   handleSelectSql,
   handleShowDiff,
   setDbName,
   dbName,
+  dbLabelList,
   handleDelete,
 }: Props) {
   const addParameter = () => {
@@ -175,11 +175,12 @@ export function QueryEditor({
             <SelectValue placeholder="接続先を選択" />
           </SelectTrigger>
           <SelectContent className="w-64">
-            {Object.keys(dbInfo).map((key) => (
-              <SelectItem key={key} value={key}>
-                {key}
-              </SelectItem>
-            ))}
+            {dbLabelList &&
+              dbLabelList.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
         <div className="space-x-2">
