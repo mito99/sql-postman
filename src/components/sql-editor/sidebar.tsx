@@ -41,7 +41,7 @@ export function Sidebar({ handleItemClick, menuItems, className }: Props) {
   }, [debouncedSearchTerm, menuItems]);
 
   return (
-    <div className={cn("w-64 border-r bg-gray-100 shrink-0", className)}>
+    <div className={cn("border-r bg-gray-100", className)}>
       <div className="p-1">
         <Input
           placeholder="Search"

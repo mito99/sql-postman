@@ -19,6 +19,11 @@ import {
   SqlHistory,
   SqlParameter,
 } from "./types";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 export function SqlExecutor() {
   const { toast } = useToast();
@@ -241,41 +246,47 @@ export function SqlExecutor() {
   return (
     <div className="flex justify-center">
       <div className="flex h-screen bg-background text-foreground container">
-        <Sidebar
-          menuItems={menuItems}
-          handleItemClick={handleItemClick}
-          className="w-[20%] h-full"
-        />
-
-        <div className="flex-1 flex flex-col w-[80%]">
-          <Topbar handleNewQuery={handleNewQuery} />
-          <SelectedItemHeader
-            editedItem={editedItem}
-            setEditedItem={setEditedItem}
-          />
-          <QueryEditor
-            sqlQuery={sqlQuery}
-            setSqlQuery={setSqlQuery}
-            parameters={parameters}
-            setParameters={setParameters}
-            handleExecute={handleExecute}
-            handleSave={handleSave}
-            sqlHistory={sqlHistory}
-            setSqlHistory={setSqlHistory}
-            selectedSqlList={selectedSqlList}
-            setSelectedSqlList={setSelectedSqlList}
-            handleSelectSql={handleSelectSql}
-            handleShowDiff={handleShowDiff}
-            dbName={dbName}
-            setDbName={setDbName}
-            handleDelete={handleDelete}
-          />
-          <ResponseArea
-            response={response}
-            className="flex-1"
-            editedItem={editedItem}
-          />
-        </div>
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel defaultSize={25}>
+            <Sidebar
+              menuItems={menuItems}
+              handleItemClick={handleItemClick}
+              className="h-full"
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle={true} />
+          <ResizablePanel defaultSize={75}>
+            <div className="flex-1 flex flex-col">
+              <Topbar handleNewQuery={handleNewQuery} />
+              <SelectedItemHeader
+                editedItem={editedItem}
+                setEditedItem={setEditedItem}
+              />
+              <QueryEditor
+                sqlQuery={sqlQuery}
+                setSqlQuery={setSqlQuery}
+                parameters={parameters}
+                setParameters={setParameters}
+                handleExecute={handleExecute}
+                handleSave={handleSave}
+                sqlHistory={sqlHistory}
+                setSqlHistory={setSqlHistory}
+                selectedSqlList={selectedSqlList}
+                setSelectedSqlList={setSelectedSqlList}
+                handleSelectSql={handleSelectSql}
+                handleShowDiff={handleShowDiff}
+                dbName={dbName}
+                setDbName={setDbName}
+                handleDelete={handleDelete}
+              />
+              <ResponseArea
+                response={response}
+                className="flex-1"
+                editedItem={editedItem}
+              />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
         <DiffModal
           open={showDiff}
           onOpenChange={setShowDiff}
