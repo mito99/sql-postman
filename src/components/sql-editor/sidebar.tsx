@@ -10,6 +10,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { MenuItem, MenuItems } from "./types";
+import { Input } from "../ui/input";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
+import useDebounce from "@/hooks/use-debounce";
 
 interface Props {
   handleItemClick: (section: MenuItems, item: MenuItem) => void;
@@ -18,11 +22,37 @@ interface Props {
 }
 
 export function Sidebar({ handleItemClick, menuItems, className }: Props) {
+  const [filterMenuItems, setFilterMenuItems] = useState<MenuItems[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    const fm: MenuItems[] = menuItems
+      .map((section) => {
+        return {
+          ...section,
+          items: section.items.filter((item) =>
+            item.name.toLowerCase().includes(debouncedSearchTerm)
+          ),
+        } as MenuItems;
+      })
+      .filter((section) => section.items.length > 0);
+    setFilterMenuItems(fm);
+  }, [debouncedSearchTerm, menuItems]);
+
   return (
     <div className={cn("w-64 border-r bg-gray-100 shrink-0", className)}>
+      <div className="p-1">
+        <Input
+          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <ScrollArea className="h-screen p-4">
         <Accordion type="multiple" className="w-full">
-          {menuItems.map((section) => (
+          {filterMenuItems.map((section) => (
             <AccordionItem value={section.id} key={section.id}>
               <AccordionTrigger className="px-4 py-2 text-sm font-medium">
                 {section.name}
