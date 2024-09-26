@@ -30,25 +30,25 @@ RUN npm install -g pnpm
 RUN pnpm install
 RUN pnpm build
 
-# FROM node:20-alpine AS runtime
-# ARG ORACLE_VER
-# ARG ORACLE_SHORT_VER
+FROM node:20-alpine AS runtime
+ARG ORACLE_VER
+ARG ORACLE_SHORT_VER
 
-# WORKDIR /app
+WORKDIR /app
 
-# RUN npm install -g pnpm
+RUN npm install -g pnpm
 
-# COPY --from=build /app/package*.json ./
-# COPY --from=build /app/node_modules ./node_modules
-# COPY --from=build /app/.next ./.next
-# COPY --from=build /app/public /app/public
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public /app/public
 
-# RUN apk add --no-cache libaio libc6-compat libnsl && \
-#     cp -r /usr/lib/libnsl.so.3 /usr/lib/libnsl.so.1
-# COPY --from=build /opt/oracle /opt/oracle
-# ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_${ORACLE_SHORT_VER}/lib:$LD_LIBRARY_PATH
-# ENV ORACLE_HOME=/opt/oracle/instantclient_${ORACLE_SHORT_VER}
+RUN apk add --no-cache libaio libc6-compat libnsl && \
+    cp -r /usr/lib/libnsl.so.3 /usr/lib/libnsl.so.1
+COPY --from=build /opt/oracle /opt/oracle
+ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_${ORACLE_SHORT_VER}/lib:$LD_LIBRARY_PATH
+ENV ORACLE_HOME=/opt/oracle/instantclient_${ORACLE_SHORT_VER}
 
-# EXPOSE 3000
+EXPOSE 3000
 
 CMD ["pnpm", "start"]
