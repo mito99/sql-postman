@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: config => {
+  webpack: (config) => {
     /**
      * These packages need to be added as external, else Oracle DB will try to load them due to a
      * Webpack bug.
@@ -17,11 +17,14 @@ const nextConfig = {
         "oci-common",
         "oci-objectstorage",
         "oci-secrets",
-      ],
-    )
-    config.resolve.modules.push('./src')
-    return config
+      ]
+    );
+    config.resolve.modules.push("./src");
+    return config;
   },
-}
+  experimental: {
+    serverComponentsExternalPackages: ["oracledb"],
+  },
+};
 
-export default nextConfig
+export default nextConfig;

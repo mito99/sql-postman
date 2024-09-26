@@ -1,13 +1,16 @@
 import { Query } from "@/components/sql-editor";
+import { getMongoDbInfo } from "@/config/db";
 import { MongoClient, ObjectId } from "mongodb";
-
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
-const dbName = process.env.MONGODB_DB || "test";
 
 let client: MongoClient;
 let db: any;
 
 export async function connectToDatabase() {
+  const { uri, db: dbName } = getMongoDbInfo() || {};
+  if (!uri || !dbName) {
+    throw new Error("MongoDB connection info is not set");
+  }
+
   if (client) {
     return db;
   }

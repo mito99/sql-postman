@@ -27,26 +27,32 @@ function parseConnectionString(connectionString: string): DbConfig | null {
   };
 }
 
-const dbInfo: DbInfo = (() => {
+export function getDbInfo(): DbInfo {
   const dbInfo: DbInfo = {};
-  let index = 1;
-  while (true) {
-    const label = process.env[`ORACLE_DB_${index}_LABEL`];
-    const connectionString =
-      process.env[`ORACLE_DB_${index}_CONNECTION_STRING`];
+  for (let i = 0; i < 20; i++) {
+    const label = process.env[`ORACLE_DB_${i}_LABEL`];
+    const connectionString = process.env[`ORACLE_DB_${i}_CONNECTION_STRING`];
 
     if (!label || !connectionString) {
       break;
     }
-
     const config = parseConnectionString(connectionString);
     if (config) {
       dbInfo[label] = config;
     }
-
-    index++;
   }
   return dbInfo;
-})();
+}
 
-export default dbInfo;
+export function getOracleClientMode(): string {
+  return process.env.ORACLE_CLIENT_MODE || "";
+}
+
+export function getMongoDbInfo(): { uri: string; db: string } | null {
+  const uri = process.env.MONGODB_URI;
+  const db = process.env.MONGODB_DB;
+  if (!uri || !db) {
+    return null;
+  }
+  return { uri, db };
+}

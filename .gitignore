@@ -36,5 +36,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-oracle-data
+/docker/volumes/*
+/docker/oracle_client/*
 .next

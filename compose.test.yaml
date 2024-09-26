@@ -11,6 +11,6 @@ services:
       - ORACLE_PWD=mito
       - ORACLE_CHARACTERSET=AL32UTF8
     volumes:
-      - ./oracle-data:/opt/oracle/oradata
+      - ./docker/volumes/oracle-data:/opt/oracle/oradata
     shm_size: 2g
     user: "54321:54321"

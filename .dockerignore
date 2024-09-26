@@ -1,3 +1,5 @@
-oracle-data
+docker/volumes
+app
 node_modules
 .next
+.env.local

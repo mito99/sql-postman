@@ -1,9 +1,9 @@
-import dbInfo from "@/config/db";
+import { getDbInfo } from "@/config/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const labels = Object.keys(dbInfo);
+    const labels = Object.keys(getDbInfo());
     return NextResponse.json({ labels });
   } catch (error) {
     console.error("データベースラベルの取得エラー:", error);

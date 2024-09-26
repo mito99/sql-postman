@@ -1,5 +1,11 @@
-import dbInfo from "@/config/db";
+import { getDbInfo, getOracleClientMode } from "@/config/db";
 import oracledb, { Connection, Result } from "oracledb";
+
+// 環境変数 ORACLE_CLIENT_MODE でThick/Thinモードを切り替える
+const isThickMode = getOracleClientMode() === "thick";
+if (isThickMode) {
+  oracledb.initOracleClient();
+}
 
 interface BindItem {
   key: string;
@@ -7,6 +13,7 @@ interface BindItem {
 }
 
 async function getConnection(dbName?: string): Promise<Connection> {
+  const dbInfo = getDbInfo();
   const dbConfig: oracledb.ConnectionAttributes = {
     user: dbInfo[dbName || "app1"].user,
     password: dbInfo[dbName || "app1"].password,
