@@ -192,6 +192,7 @@ export function SqlExecutor() {
         name: editedItem?.name,
         _id: editedItem?.id,
         method: editedItem?.method,
+        description: editedItem?.description,
       }),
     });
 
