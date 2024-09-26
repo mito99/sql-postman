@@ -272,7 +272,7 @@ export function SqlExecutor() {
           </ResizablePanel>
           <ResizableHandle withHandle={true} />
           <ResizablePanel defaultSize={75}>
-            <div className="flex-1 flex flex-col">
+            <div className="flex flex-col h-screen">
               <Topbar handleNewQuery={handleNewQuery} />
               <SelectedItemHeader
                 editedItem={editedItem}

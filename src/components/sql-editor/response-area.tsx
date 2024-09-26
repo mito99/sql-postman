@@ -115,59 +115,57 @@ const ExportDialog = ({
 
 export function ResponseArea({ response, className, editedItem }: Props) {
   return (
-    <div className={cn("p-4 border-t flex flex-col overflow-auto", className)}>
-      <div className="flex justify-between">
-        <h3 className="text-lg font-semibold mb-2">レスポンス</h3>
+    <div
+      className={cn("p-4 border-t flex flex-col overflow-hidden", className)}
+    >
+      <header className="flex justify-between items-center h-8">
+        <h3 className="text-sm font-semibold mb-2">レスポンス</h3>
         {response && (
           <ExportDialog response={response} editedItem={editedItem}>
             <Button variant="outline" size="sm">
-              <i className="i-lucide-download text-2xl" />
+              <i className="i-lucide-download text-1xl" />
             </Button>
           </ExportDialog>
         )}
-      </div>
-      <div className="flex-1 border rounded-md">
-        <ScrollArea>
-          {response ? (
-            <div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {response.columns.map((column, index) => (
-                      <TableHead
-                        key={index}
-                        className="px-4 py-2 whitespace-nowrap"
-                      >
-                        {column}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {response.rows.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      {response.columns.map((column, colIndex) => (
-                        <TableCell
-                          key={colIndex}
-                          className="px-4 py-2 whitespace-nowrap"
-                        >
-                          {row[column]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+      </header>
+      <ScrollArea className="flex-1">
+        {response ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {response.columns.map((column, index) => (
+                  <TableHead
+                    key={index}
+                    className="px-4 py-2 whitespace-nowrap"
+                  >
+                    {column}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {response.rows.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {response.columns.map((column, colIndex) => (
+                    <TableCell
+                      key={colIndex}
+                      className="px-4 py-2 whitespace-nowrap"
+                    >
+                      {row[column]}
+                    </TableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <i className="i-lucide-database text-4xl m-5" />
-              <p>クエリを実行するとレスポンスがここに表示されます</p>
-            </div>
-          )}
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <i className="i-lucide-database text-4xl m-5" />
+            <p>クエリを実行するとレスポンスがここに表示されます</p>
+          </div>
+        )}
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }
