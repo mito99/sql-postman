@@ -5,9 +5,10 @@ export async function POST(request: Request) {
   try {
     const { dbName, sqlQuery, binds } = await request.json();
 
+    const sanitizedSqlQuery = sqlQuery.trim().replace(/;+$/, "");
     const { rows, columns } = await executeDynamicQuery({
       dbName,
-      sql: sqlQuery,
+      sql: sanitizedSqlQuery,
       binds,
     });
 
