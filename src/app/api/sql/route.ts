@@ -19,9 +19,11 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("SQL 実行エラー:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({
       status: "error",
-      message: "SQL 実行中にエラーが発生しました。",
+      message: `SQL 実行中にエラーが発生しました。${errorMessage}`,
     });
   }
 }
