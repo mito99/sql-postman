@@ -1,7 +1,12 @@
 "use client";
 
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DiffModal } from "./diff-modal";
 import { QueryEditor } from "./query-editor";
 import { ResponseArea } from "./response-area";
@@ -16,14 +21,8 @@ import {
   ResponseData,
   SelectedItem,
   SelectedSqlList,
-  SqlHistory,
-  SqlParameter,
+  SqlHistory
 } from "./types";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 
 export function SqlExecutor() {
   const { toast } = useToast();
@@ -31,15 +30,13 @@ export function SqlExecutor() {
   const [sqlQuery, setSqlQuery] = useState("");
   const [dbName, setDbName] = useState("app1");
   const [response, setResponse] = useState<ResponseData | null>(null);
-  const [parameters, setParameters] = useState<SqlParameter[]>([
-    { id: 1, enabled: true, key: "", value: "", description: "" },
-  ]);
   const [editedItem, setEditedItem] = useState<EditedItem>({
     id: "",
     directory: "",
     name: "",
     description: "",
     method: "SELECT",
+    parameters: [],
   });
   const [sqlHistory, setSqlHistory] = useState<SqlHistory[]>([]);
   const [selectedSqlList, setSelectedSqlList] = useState<SelectedSqlList>([
@@ -99,6 +96,7 @@ export function SqlExecutor() {
           method: query.method,
           sql: query.sqlQuery,
           description: query.description,
+          parameters: query.parameters,
         })),
       })
     ) as MenuItems[];
@@ -115,10 +113,8 @@ export function SqlExecutor() {
       name: item.name,
       method: item.method,
       description: item.description,
+      parameters: item.parameters,
     });
-    setParameters([
-      { id: 1, enabled: true, key: "", value: "", description: "" },
-    ]);
     setResponse(null);
   };
 
@@ -131,12 +127,13 @@ export function SqlExecutor() {
       name: "",
       method: "SELECT",
       description: "",
+      parameters: [],
     });
   };
 
   const handleExecute = async () => {
     // パラメータをAPIに渡すためのフォーマットに変換
-    const apiParameters = parameters.map((param) => ({
+    const apiParameters = editedItem?.parameters.map((param) => ({
       key: param.key,
       value: param.value,
     }));
@@ -186,7 +183,7 @@ export function SqlExecutor() {
     const response = await fetch("/api/query", {
       method: "POST",
       body: JSON.stringify({
-        parameters: parameters,
+        parameters: editedItem?.parameters,
         sqlQuery: sqlQuery,
         group: editedItem?.directory,
         name: editedItem?.name,
@@ -282,8 +279,8 @@ export function SqlExecutor() {
               <QueryEditor
                 sqlQuery={sqlQuery}
                 setSqlQuery={setSqlQuery}
-                parameters={parameters}
-                setParameters={setParameters}
+                editItem={editedItem}
+                setEditItem={setEditedItem}
                 handleExecute={handleExecute}
                 handleSave={handleSave}
                 sqlHistory={sqlHistory}

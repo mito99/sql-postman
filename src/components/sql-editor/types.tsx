@@ -30,6 +30,7 @@ interface MenuItem {
   method: EditedItem["method"];
   sql: string;
   description: string;
+  parameters: SqlParameter[];
 }
 
 interface MenuItems {
@@ -67,7 +68,8 @@ interface EditedItem {
   directory: string;
   name: string;
   method: "" | "SELECT" | "UPDATE" | "INSERT" | "DELETE";
-  description: string; // 概要を追加
+  description: string; 
+  parameters: SqlParameter[];
 }
 
 export type {
@@ -79,5 +81,6 @@ export type {
   SelectedItem,
   SelectedSqlList,
   SqlHistory,
-  SqlParameter,
+  SqlParameter
 };
+

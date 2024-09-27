@@ -49,27 +49,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { SelectedSqlList, SqlHistory } from "./types";
+import { EditedItem, SelectedSqlList, SqlHistory } from "./types";
 
 interface Props {
   sqlQuery: string;
   setSqlQuery: (sqlQuery: string) => void;
-  parameters: {
-    id: number;
-    enabled: boolean;
-    key: string;
-    value: string;
-    description: string;
-  }[];
-  setParameters: (
-    parameters: {
-      id: number;
-      enabled: boolean;
-      key: string;
-      value: string;
-      description: string;
-    }[]
-  ) => void;
+  editItem: EditedItem;
+  setEditItem: (editItem: EditedItem) => void;
   handleExecute: () => void;
   handleSave: () => void;
   sqlHistory: SqlHistory[];
@@ -133,8 +119,8 @@ const DeleteButton = ({ handleDelete }: { handleDelete: () => void }) => {
 export function QueryEditor({
   sqlQuery,
   setSqlQuery,
-  parameters,
-  setParameters,
+  editItem, 
+  setEditItem,
   handleExecute,
   handleSave,
   sqlHistory,
@@ -146,23 +132,31 @@ export function QueryEditor({
   dbLabelList,
   handleDelete,
 }: Props) {
+
   const addParameter = () => {
-    setParameters([
-      ...parameters,
-      { id: Date.now(), enabled: true, key: "", value: "", description: "" },
-    ]);
+    setEditItem({
+      ...editItem,
+      parameters: [
+        ...editItem.parameters,
+        { id: editItem.parameters.length + 1, enabled: true, key: "", value: "", description: "" },
+      ],
+    });
   };
 
   const updateParameter = (id: number, field: string, value: string) => {
-    setParameters(
-      parameters.map((param) =>
+    setEditItem({
+      ...editItem,
+      parameters: editItem.parameters.map((param) =>
         param.id === id ? { ...param, [field]: value } : param
-      )
-    );
+      ),
+    });
   };
 
   const removeParameter = (id: number) => {
-    setParameters(parameters.filter((param) => param.id !== id));
+    setEditItem({
+      ...editItem,
+      parameters: editItem.parameters.filter((param) => param.id !== id),
+    });
   };
 
   return (
@@ -246,7 +240,7 @@ export function QueryEditor({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {parameters.map((param) => (
+                {editItem.parameters.map((param) => (
                   <TableRow key={param.id}>
                     <TableCell>
                       <Input
