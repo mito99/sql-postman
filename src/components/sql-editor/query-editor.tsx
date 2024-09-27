@@ -6,8 +6,7 @@ import {
   Plus,
   Save,
   Send,
-  Share2,
-  Trash2,
+  Trash2
 } from "lucide-react";
 
 import {
@@ -51,7 +50,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { SelectedSqlList, SqlHistory } from "./types";
-import { useState, useEffect } from "react";
 
 interface Props {
   sqlQuery: string;
@@ -186,10 +184,6 @@ export function QueryEditor({
         <div className="space-x-2">
           <SaveButton handleSave={handleSave} />
           <DeleteButton handleDelete={handleDelete} />
-          <Button variant="outline" size="sm">
-            <Share2 className="h-4 w-4 mr-2" />
-            共有
-          </Button>
           <Button onClick={handleExecute}>
             <Send className="h-4 w-4 mr-2" />
             実行
